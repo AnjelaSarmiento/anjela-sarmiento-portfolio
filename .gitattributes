@@ -1,0 +1,15 @@
+# Normalize line endings across platforms
+* text=auto
+
+# Keep source files LF in repo
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.mjs text eol=lf
+*.tsbuildinfo text eol=lf
+
