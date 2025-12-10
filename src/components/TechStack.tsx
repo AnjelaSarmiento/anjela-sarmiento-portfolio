@@ -61,7 +61,7 @@ export default function TechStack() {
       ref={ref}
       className="py-20 px-4 sm:px-6 lg:px-8 bg-space-dark/50"
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}

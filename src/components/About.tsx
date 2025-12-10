@@ -14,7 +14,7 @@ export default function About() {
       <section
       id="about"
       ref={ref}
-      className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+      className="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto"
     >
       <motion.div
         initial={{ opacity: 0, y: 50 }}
@@ -211,7 +211,7 @@ export default function About() {
             initial={{ opacity: 0, x: 30 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-8 order-1 lg:order-2"
+            className="space-y-8 order-1 lg:order-2 text-center lg:text-left"
           >
             {/* Introduction - Enhanced Hierarchy */}
             <div className="space-y-4">
