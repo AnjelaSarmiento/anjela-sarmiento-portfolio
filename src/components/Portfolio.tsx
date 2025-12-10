@@ -67,6 +67,30 @@ export default function Portfolio() {
     };
   }, []);
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (selectedProject) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+      
+      // Lock body scroll
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+
+      // Cleanup function to restore scroll
+      return () => {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        // Restore scroll position
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [selectedProject]);
+
   return (
     <section
       id="portfolio"
@@ -253,7 +277,7 @@ export default function Portfolio() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ duration: 0.2 }}
-              className="relative w-full max-w-2xl bg-space-darker glass rounded-2xl p-6 md:p-8 max-h-[90vh] overflow-y-auto"
+              className="relative w-full max-w-2xl bg-space-darker glass rounded-2xl p-6 md:p-8 max-h-[90vh] overflow-y-auto overscroll-contain touch-pan-y"
               onClick={(e) => e.stopPropagation()}
             >
               <button
