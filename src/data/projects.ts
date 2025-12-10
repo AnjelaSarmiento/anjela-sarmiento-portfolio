@@ -55,9 +55,9 @@ export const projects: Project[] = [
     id: "2",
     title: "Sales Force App",
     description:
-      "Contributed to the Sales Force App by building key modules including user profile management, full CRUD operations, role-based access, and file handling.",
+      "Contributed to the Sales Force App by building key modules including user profile management, task management system, full CRUD operations, role-based access, and file handling.",
     summary:
-      "Sales enablement web app with user profiles, CRUD flows, RBAC, and document handling.",
+      "Sales enablement web app with user profiles, task management, CRUD flows, RBAC, and document handling.",
     problem:
       "Field reps needed a secure, centralized way to manage accounts, roles, and sales docs.",
     role:
@@ -67,6 +67,7 @@ export const projects: Project[] = [
       "Built profile module with editable roles and permissions",
       "Implemented CRUD flows with validation and server-side filtering",
       "Added secure file handling for sales documents",
+      "Developed task management system where users can create, edit, and manage tasks with full CRUD operations",
     ],
     image: "/images/sfa-1.png",
     techStack: [
