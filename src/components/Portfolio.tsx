@@ -87,7 +87,6 @@ export default function Portfolio() {
       // Cleanup runs when modal closes
       return () => {
         const scrollTop = document.body.style.top;
-
         document.body.style.overflow = "";
         document.body.style.position = "";
         document.body.style.top = "";
@@ -95,8 +94,9 @@ export default function Portfolio() {
         document.body.style.paddingRight = "";
 
         // Restore exact scroll position immediately to avoid visible jumps
-        const offset = scrollTop ? parseInt(scrollTop, 10) : -savedScrollPosition.current;
-        const restoreTo = offset ? -offset : savedScrollPosition.current;
+        const restoreTo = scrollTop
+          ? -1 * (parseInt(scrollTop, 10) || 0)
+          : savedScrollPosition.current;
         window.scrollTo(0, restoreTo);
         savedScrollPosition.current = 0;
       };
