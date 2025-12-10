@@ -97,6 +97,8 @@ export default function Portfolio() {
 
       // Wait for exit animation to complete (0.2s transition + small buffer)
       restoreScrollTimeout.current = setTimeout(() => {
+        const restoreScroll = savedScrollPosition.current;
+
         // Restore body styles
         document.body.style.overflow = '';
         document.body.style.position = '';
@@ -104,13 +106,11 @@ export default function Portfolio() {
         document.body.style.width = '';
         document.body.style.paddingRight = '';
         
-        // Restore scroll position using requestAnimationFrame for smooth restoration
-        requestAnimationFrame(() => {
-          const scrollPos = savedScrollPosition.current > 0 ? savedScrollPosition.current : 0;
-          window.scrollTo(0, scrollPos);
-          // Reset saved position after restoration
-          savedScrollPosition.current = 0;
-        });
+        // Restore scroll position immediately to avoid visible jumps
+        const scrollPos = restoreScroll > 0 ? restoreScroll : 0;
+        window.scrollTo(0, scrollPos);
+        // Reset saved position after restoration
+        savedScrollPosition.current = 0;
         
         restoreScrollTimeout.current = null;
       }, 250); // Slightly longer than exit animation duration (200ms)
