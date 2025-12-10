@@ -18,6 +18,7 @@ export default function Portfolio() {
   const scmsTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const savedScrollPosition = useRef<number>(0);
   const restoreScrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isModalOpen = useRef<boolean>(false);
 
   const clearSfaTimers = () => {
     sfaTimers.current.forEach((timer) => clearTimeout(timer));
@@ -78,6 +79,9 @@ export default function Portfolio() {
         restoreScrollTimeout.current = null;
       }
 
+      // Mark modal as open
+      isModalOpen.current = true;
+
       // Save current scroll position using ref to persist across renders
       savedScrollPosition.current = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
       
@@ -87,40 +91,58 @@ export default function Portfolio() {
       document.body.style.top = `-${savedScrollPosition.current}px`;
       document.body.style.width = '100%';
       document.body.style.paddingRight = '0px'; // Prevent layout shift from scrollbar
+    } else if (isModalOpen.current || document.body.style.position === 'fixed') {
+      // Modal is closing - restore if it was previously open OR if body is still locked
+      isModalOpen.current = false;
 
-      // Cleanup function runs when modal closes (selectedProject becomes null)
-      return () => {
-        // Wait for exit animation to complete (0.2s transition + small buffer)
-        restoreScrollTimeout.current = setTimeout(() => {
-          // Restore body styles
-          document.body.style.overflow = '';
-          document.body.style.position = '';
-          document.body.style.top = '';
-          document.body.style.width = '';
-          document.body.style.paddingRight = '';
-          
-          // Restore scroll position using requestAnimationFrame for smooth restoration
-          requestAnimationFrame(() => {
-            window.scrollTo(0, savedScrollPosition.current);
-          });
-          
-          restoreScrollTimeout.current = null;
-        }, 250); // Slightly longer than exit animation duration (200ms)
-      };
-    } else {
-      // If modal is not open, ensure any pending timeout is cleared
+      // Wait for exit animation to complete (0.2s transition + small buffer)
+      restoreScrollTimeout.current = setTimeout(() => {
+        // Restore body styles
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.paddingRight = '';
+        
+        // Restore scroll position using requestAnimationFrame for smooth restoration
+        requestAnimationFrame(() => {
+          const scrollPos = savedScrollPosition.current > 0 ? savedScrollPosition.current : 0;
+          window.scrollTo(0, scrollPos);
+          // Reset saved position after restoration
+          savedScrollPosition.current = 0;
+        });
+        
+        restoreScrollTimeout.current = null;
+      }, 250); // Slightly longer than exit animation duration (200ms)
+    }
+
+    // Cleanup function - ensure scroll is restored if modal opens while another is closing
+    return () => {
+      // If a new modal is opening, we've already cleared the timeout above
+      // This cleanup is mainly for edge cases
+    };
+  }, [selectedProject]);
+
+  // Cleanup on unmount - ensure scroll is always restored
+  useEffect(() => {
+    return () => {
+      // Clear any pending timeout
       if (restoreScrollTimeout.current) {
         clearTimeout(restoreScrollTimeout.current);
         restoreScrollTimeout.current = null;
       }
-    }
-  }, [selectedProject]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (restoreScrollTimeout.current) {
-        clearTimeout(restoreScrollTimeout.current);
+      
+      // Safety: restore scroll if body is still locked
+      if (document.body.style.position === 'fixed') {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.paddingRight = '';
+        
+        if (savedScrollPosition.current > 0) {
+          window.scrollTo(0, savedScrollPosition.current);
+        }
       }
     };
   }, []);
