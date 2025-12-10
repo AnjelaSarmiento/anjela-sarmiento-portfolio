@@ -40,13 +40,13 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid lg:grid-cols-2 gap-10 md:gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-10 md:gap-12 items-center justify-items-center lg:justify-items-start text-center lg:text-left">
           {/* Text Content */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center lg:text-left"
+            className="w-full max-w-xl mx-auto lg:mx-0"
           >
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
