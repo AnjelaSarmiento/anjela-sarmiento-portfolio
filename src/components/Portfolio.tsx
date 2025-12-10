@@ -16,6 +16,8 @@ export default function Portfolio() {
   const [scmsImageIndex, setScmsImageIndex] = useState(0);
   const sfaTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const scmsTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const savedScrollPosition = useRef<number>(0);
+  const restoreScrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clearSfaTimers = () => {
     sfaTimers.current.forEach((timer) => clearTimeout(timer));
@@ -67,29 +69,61 @@ export default function Portfolio() {
     };
   }, []);
 
-  // Lock body scroll when modal is open
+  // Lock body scroll when modal is open and restore when closed
   useEffect(() => {
     if (selectedProject) {
-      // Save current scroll position
-      const scrollY = window.scrollY;
+      // Clear any pending restore timeout
+      if (restoreScrollTimeout.current) {
+        clearTimeout(restoreScrollTimeout.current);
+        restoreScrollTimeout.current = null;
+      }
+
+      // Save current scroll position using ref to persist across renders
+      savedScrollPosition.current = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
       
       // Lock body scroll
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
+      document.body.style.top = `-${savedScrollPosition.current}px`;
       document.body.style.width = '100%';
+      document.body.style.paddingRight = '0px'; // Prevent layout shift from scrollbar
 
-      // Cleanup function to restore scroll
+      // Cleanup function runs when modal closes (selectedProject becomes null)
       return () => {
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        // Restore scroll position
-        window.scrollTo(0, scrollY);
+        // Wait for exit animation to complete (0.2s transition + small buffer)
+        restoreScrollTimeout.current = setTimeout(() => {
+          // Restore body styles
+          document.body.style.overflow = '';
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.body.style.width = '';
+          document.body.style.paddingRight = '';
+          
+          // Restore scroll position using requestAnimationFrame for smooth restoration
+          requestAnimationFrame(() => {
+            window.scrollTo(0, savedScrollPosition.current);
+          });
+          
+          restoreScrollTimeout.current = null;
+        }, 250); // Slightly longer than exit animation duration (200ms)
       };
+    } else {
+      // If modal is not open, ensure any pending timeout is cleared
+      if (restoreScrollTimeout.current) {
+        clearTimeout(restoreScrollTimeout.current);
+        restoreScrollTimeout.current = null;
+      }
     }
   }, [selectedProject]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (restoreScrollTimeout.current) {
+        clearTimeout(restoreScrollTimeout.current);
+      }
+    };
+  }, []);
 
   return (
     <section
